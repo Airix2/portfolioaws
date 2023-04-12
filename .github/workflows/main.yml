@@ -15,6 +15,7 @@ jobs:
             PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
             HOSTNAME : ${{ secrets.HOSTNAME  }}
             USER_NAME : ${{ secrets.AWS_USERNAME  }}
+            REPO: portfolioaws
         with:
           host: ${{ secrets.HOSTNAME }}
           username: ${{ secrets.AWS_USERNAME }}
@@ -22,6 +23,6 @@ jobs:
           script: |
             docker login
             docker pull ${{secrets.DOCKER_USER}}/$REPO
-            docker stop ${{secrets.DOCKER_USER}}/$REPO
-            docker rm ${{secrets.DOCKER_USER}}/$REPO
-            docker run -p 3000:3000 ${{secrets.DOCKER_USER}}/$REPO
+            docker stop portfolio
+            docker rm portfolio
+            docker run --detach --name portfolio -p 3000:3000 ${{secrets.DOCKER_USER}}/$REPO
