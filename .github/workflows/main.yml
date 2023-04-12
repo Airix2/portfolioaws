@@ -15,7 +15,6 @@ jobs:
             PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
             HOSTNAME : ${{ secrets.HOSTNAME  }}
             USER_NAME : ${{ secrets.AWS_USERNAME  }}
-            REPO: portfolioaws
         with:
           host: ${{ secrets.HOSTNAME }}
           username: ${{ secrets.AWS_USERNAME }}
@@ -23,7 +22,7 @@ jobs:
           script: |
             docker login
             echo "Successfully logged in"
-            docker pull ${{secrets.DOCKER_USER}}/$REPO
+            docker pull ${{secrets.DOCKER_USER}}/portfolioaws
             
             echo "pulled it"
             docker images
@@ -37,4 +36,4 @@ jobs:
             echo "removed container"
             docker ps
             
-            docker run --detach --name portfolio -p 3000:3000 ${{secrets.DOCKER_USER}}/$REPO
+            docker run --detach --name portfolio -p 3000:3000 ${{secrets.DOCKER_USER}}/portfolioaws
