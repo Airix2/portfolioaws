@@ -22,7 +22,19 @@ jobs:
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
             docker login
+            echo "Successfully logged in"
             docker pull ${{secrets.DOCKER_USER}}/$REPO
+            
+            echo "pulled it"
+            docker images
+            docker ps
+            
             docker stop portfolio
+            
+            echo "stopped"
             docker rm portfolio
+            
+            echo "removed container"
+            docker ps
+            
             docker run --detach --name portfolio -p 3000:3000 ${{secrets.DOCKER_USER}}/$REPO
