@@ -9,18 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v2 
-      - name: Deploy in EC2
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
         env:
             PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
             HOSTNAME : ${{ secrets.HOSTNAME  }}
             USER_NAME : ${{ secrets.AWS_USERNAME  }}
-            
-        run: |
-          echo "$PRIVATE_KEY" > private_key
-          ssh -i private_key ${USER_NAME}@${HOSTNAME}
-          
-            #Now we have got the access of EC2 and we will start the deploy .
+        with:
+          host: ${{ secrets.HOSTNAME }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
             docker login
             docker pull ${{secrets.DOCKER_USER}}/$REPO
             docker stop ${{secrets.DOCKER_USER}}/$REPO
