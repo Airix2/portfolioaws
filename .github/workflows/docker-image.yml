@@ -27,7 +27,7 @@ jobs:
     - name: Docker Push
       env:
         REPO: portfolioaws
-      run:
-        docker build -t $REPO
+      run: |
+        docker build -t $REPO .
         docker tag $REPO:latest ${{secrets.DOCKER_USER}}/$REPO:latest
         docker push ${{secrets.DOCKER_USER}}/$REPO
