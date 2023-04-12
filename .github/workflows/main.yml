@@ -17,7 +17,7 @@ jobs:
             USER_NAME : ${{ secrets.AWS_USERNAME  }}
             
         run: |
-          chmod 400 private_key
+          chmod 400 ${PRIVATE_KEY}
           ssh -i "mainkey.pem" ${USER_NAME}@${HOSTNAME}
           
             #Now we have got the access of EC2 and we will start the deploy .
