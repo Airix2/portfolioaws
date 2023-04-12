@@ -17,7 +17,8 @@ jobs:
             USER_NAME : ${{ secrets.AWS_USERNAME  }}
             
         run: |
-          ssh -i "${PRIVATE_KEY}" ${USER_NAME}@${HOSTNAME}
+          echo "$PRIVATE_KEY" > private_key
+          ssh -i private_key ${USER_NAME}@${HOSTNAME}
           
             #Now we have got the access of EC2 and we will start the deploy .
             docker login
