@@ -1,39 +1,62 @@
-name: CI/CD counter app
+name: CI/CD for Docker and EC2
 
 on:
-  push:
-    branches: [ main ]
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
 
 jobs:
-  Deploy:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
-        env:
-            PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
-            HOSTNAME : ${{ secrets.HOSTNAME  }}
-            USER_NAME : ${{ secrets.AWS_USERNAME  }}
-        with:
-          host: ${{ secrets.HOSTNAME }}
-          username: ${{ secrets.AWS_USERNAME }}
-          key: ${{ secrets.AWS_PRIVATE_KEY }}
-          script: |
-            docker login
-            echo "Successfully logged in"
-            docker pull ${{secrets.DOCKER_USER}}/portfolioaws
-            
-            echo "pulled it"
-            docker images
-            docker ps
-            
-            docker stop portfolio
-            
-            echo "stopped"
-            docker rm portfolio
-            
-            echo "removed container"
-            docker ps
-            
-            docker run --detach --name portfolio -p 3000:3000 ${{secrets.DOCKER_USER}}/portfolioaws
+    Build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+            - name: Build the Docker image
+              run: docker build . --file Dockerfile --tag alexsoto2/portfoliowas:$(date +%s)
+
+            - name: Docker Login
+              env:
+                  DOCKER_USER: ${{secrets.DOCKER_USER}}
+                  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+              run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+            - name: Docker Push
+              env:
+                  REPO: portfolioaws
+              run: |
+                  docker build -t $REPO .
+                  docker tag $REPO:latest ${{secrets.DOCKER_USER}}/$REPO:latest
+                  docker push ${{secrets.DOCKER_USER}}/$REPO
+    Deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Executing remote ssh commands using ssh key
+              uses: appleboy/ssh-action@master
+              env:
+                  PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
+                  HOSTNAME: ${{ secrets.HOSTNAME  }}
+                  USER_NAME: ${{ secrets.AWS_USERNAME  }}
+              with:
+                  host: ${{ secrets.HOSTNAME }}
+                  username: ${{ secrets.AWS_USERNAME }}
+                  key: ${{ secrets.AWS_PRIVATE_KEY }}
+                  script: |
+                      docker login
+                      echo "Successfully logged in"
+                      docker pull ${{secrets.DOCKER_USER}}/portfolioaws
+
+                      echo "pulled it"
+                      docker images
+                      docker ps
+
+                      docker stop portfolio
+
+                      echo "stopped"
+                      docker rm portfolio
+
+                      echo "removed container"
+                      docker ps
+
+                      docker run --detach --name portfolio -p 3000:3000 ${{secrets.DOCKER_USER}}/portfolioaws

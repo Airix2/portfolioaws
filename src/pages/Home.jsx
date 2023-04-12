@@ -13,8 +13,11 @@ const Home = () => {
 				online so my apologies for that.
 			</p>
 			<p>
-				This is a small personal project for me, and is mostly a way to
-				show off some of my skills.
+				This is a quick and small personal project for me, and is mostly
+				a way to show off some of my experience and skills.
+			</p>
+			<p className="text-sm">
+				Now hosted and updated automatically in Docker + AWS/EC2!
 			</p>
 		</div>
 	);
