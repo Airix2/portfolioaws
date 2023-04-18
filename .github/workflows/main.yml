@@ -60,4 +60,4 @@ jobs:
                       echo "removed container"
                       docker ps
 
-                      docker run --detach --name portfolio -p 3000:3000 ${{secrets.DOCKER_USER}}/portfolioaws
+                      docker run --detach --name portfolio -p 80:3000 ${{secrets.DOCKER_USER}}/portfolioaws
